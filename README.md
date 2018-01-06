@@ -2,7 +2,7 @@
 
 A beautiful, simple, fast framework for creating computation pipelines. 
 
-# features
+# Features
 
 - A simple way to create functionally orientated, data pipe based code. Making
 code easier to test and reason about.
@@ -12,7 +12,7 @@ whilst still providing access to the lower level internal functions used so that
 
 - Pipes are executed lazily, they will only run once their open() function is called.
 
-# goals
+# Goals
 
 - Minimalism
 - Performance
@@ -21,12 +21,17 @@ whilst still providing access to the lower level internal functions used so that
 # Building from source
 
 Since all the code is currently written in Python all you need to do is clone, or fork this repo and to install a python version of your choice. 
-The only modules that are currently used are standard python ones so nothing else needs to be installed.
+The only modules that are currently used are standard python ones so nothing else needs to be installed. 
+
 
 # Contributing
 
 Work on this section is in progress however the intention is to be beginner friendly.
 
-<!--- Changelog
+
+<!--- 
+# Getting started
+
+# Changelog
 
 - 0.0.1 --->
