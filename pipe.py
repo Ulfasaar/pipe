@@ -59,6 +59,8 @@ You may want to consider a different structure if your problem is mostly asynchr
 
 """
 
+import inspect
+from sys import version_info
 
 class Pipe:
     
@@ -86,7 +88,13 @@ class Pipe:
     def open(self, data=None):
         
         prev_result = None
-        
+        get_args = None
+
+        if(version_info[0] == 2):
+            get_args = inspect.getargspec
+        else:
+            get_args = inspect.getfullargspec
+
         if self.start_value != None and data != None:
             print("WARNING! you put a raw value at the top of your pipe and you put " + str(data) + " in the opening of the pipe the value at the start of the pipe has been overwritten by the passed in value. You may want to get rid of that value at the top of the pipe to get rid of this message\n")
         
@@ -94,13 +102,21 @@ class Pipe:
             data = self.start_value
     
         if data != None:
-            prev_result = self.tasks[0](data)
+            
+            if len(get_args(self.tasks[0]).args) == 1 or ( self.tasks[0].__module__ == "pipe" and self.tasks[0].__name__ == "open"):
+                prev_result = self.tasks[0](data)
+            elif len(get_args(self.tasks[0]).args) > 1:
+                prev_result = self.tasks[0](*data)
+                
         else:
             prev_result = self.tasks[0]()
             
         for task in self.tasks[1:]:
-            prev_result = task(prev_result)
-
+            
+            if len(get_args(task).args) == 1 or ( task.__module__ == "pipe" and task.__name__ == "open"):
+                prev_result = task(prev_result)
+            elif len(get_args(task).args) > 1:
+                prev_result = task(*prev_result)
 
         # the use is multithreading so add the result to the pool of data
         if(self.name != None):
@@ -147,7 +163,6 @@ from threading import Thread
 
 def parallel(*pipes, **kwargs):
     args = kwargs.get("args", None)
-
     threads = []
     for i, pipe in enumerate(pipes):
         
@@ -209,7 +224,7 @@ def dict_to_list(mydict):
     results = []
     for key in sorted(mydict.keys()):
         results.append(mydict[key])
-        
+    
     return results
 
 # this function will run multiple instances of a pipe in parallel and gives each pipe a split of the data it receives so that each chunk contains the number of items specified
@@ -219,22 +234,40 @@ def dict_to_list(mydict):
 def balance(pipe, chunks_size):
     def balancer(data):
         
-        increments = list(range(chunks_size, len(data), chunks_size))
+        if(chunks_size > 1):
+            increments = list(range(chunks_size, len(data), chunks_size))
 
-        pipes = [copy(pipe) for i in range(len(increments)) ]
-    
-        # label pipes
+            pipes = [copy(pipe) for i in range(len(increments)) ]
+
+            # label pipes
+
+            for i, ipipe in enumerate(pipes):
+                ipipe.name = i
+
+            args = [data[:increments[0]]]
+            for i, increment in enumerate(increments[1:]):
+                args.append(data[increments[i]:increment])
+
+            return parallel(*pipes, args=args)
         
-        for i, ipipe in enumerate(pipes):
-            ipipe.name = i
+        elif chunks_size == 1:
+            def label_copy(pipe, index):
+                new_pipe = copy(pipe)
+                new_pipe.name = index
+                return new_pipe
+
+            pipes = [label_copy(pipe,i) for i in range(len(data)) ]
             
-        args = [data[:increments[0]]]
-        for i, increment in enumerate(increments[1:]):
-            args.append(data[increments[i]:increment])
-            
-        return parallel(*pipes, args=args)
+            # label pipes
+            for i, ipipe in enumerate(pipes):
+                ipipe.name = i
+
+            return parallel(*pipes, args=data)
+        else:
+            raise Exception("Chunk size must be 1 or larger for balancer")
             
     return balancer
+
 
 # Simple balance is a shorthand for the balance function that automatically waits for the threads to finish and then aggregates
 # the results and converts them into a list of result chunks, only needed if you want to get the results easily
@@ -259,4 +292,4 @@ def simple_balance(pipe, chunk_num):
 
 # great for scenarios where you want to just run many copies of one pipe and have everything managed
 def run_concurrently(*tasks):
-   return simple_balance( Pipe( *tasks ), 1)
+    return simple_balance( Pipe( *tasks ), 1)
