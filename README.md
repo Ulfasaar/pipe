@@ -2,18 +2,31 @@
 
 A beautiful, simple, fast framework for creating computation pipelines. 
 
+# features
+
+- A simple way to create functionally orientated, data pipe based code. Making
+code easier to test and reason about.
+
+- An easy way to create various forms of parallism in Python with just a few function calls. This will spread data, agreggate it, sort it etc based on the function you use,
+whilst still providing access to the lower level internal functions used so that you can roll your own solution if a suitable one isn't present.
+
+- Pipes are executed lazily, they will only run once their open() function is called.
+
 # goals
 
 - Minimalism
 - Performance
 - Portability
 
-# TODO
+# Building from source
 
-- Create a DSL to make the API even simpler.
-- Improve performance even more by rewriting sections in c++ or by using some other means.
-- Add support for other languages besides Python, such as Javascript, C++, Golang etc.
+Since all the code is currently written in Python all you need to do is clone, or fork this repo and to install a python version of your choice. 
+The only modules that are currently used are standard python ones so nothing else needs to be installed.
 
 # Contributing
 
 Work on this section is in progress however the intention is to be beginner friendly.
+
+<!--- Changelog
+
+- 0.0.1 --->
