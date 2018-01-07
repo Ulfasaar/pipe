@@ -134,7 +134,7 @@ def copy(pipe):
 
 def limit(limit):
     def limiter(data):
-        return data[:limit+1]
+        return data[:limit]
     return limiter
 
 # Repeater, repeatedly calls a function with the same arguments x times
