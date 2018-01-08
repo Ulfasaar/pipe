@@ -134,7 +134,14 @@ def copy(pipe):
 
 def limit(limit):
     def limiter(data):
-        return data[:limit]
+        
+        if limit > 1:
+            return data[:limit]
+        elif limit == 1:
+            return data[0]
+        elif limit == 0:
+            return None
+                
     return limiter
 
 # Repeater, repeatedly calls a function with the same arguments x times
@@ -148,11 +155,11 @@ def repeat(function, times):
     
 # Validator, runs validate function which must return true or false depending on whether or not the data is valid, if it is valid then it will return the input data, if it is not valid it will execute another function to get the corrected result
 
-def validate(validity_checker, on_fail):
+def validate(validity_checker, on_fail = None):
     def validator(data):
         if(validity_checker(data)):
             return data
-        else:
+        elif on_fail != None:
             return on_fail(data)
     return validator
 
