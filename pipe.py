@@ -1,7 +1,8 @@
 """
-Pipes provide a nice way to lazily queue tasks for later execution and allow for a nice way to chain together sequential functions. They also provide many other benefits listed below along with their usage information
+Pipes provide a nice way to lazily queue steps for later execution and allow for a nice way to chain together sequential functions. They also provide many other benefits listed below along with their usage information
 
 Pipes can accept raw values at their tops but nowhere else in the pipe as that would break the flow and be pointless 
+
 
 
 EG: Pipe(
@@ -64,26 +65,29 @@ from sys import version_info
 
 class Pipe:
     
-    def __init__(self, *tasks, **kwargs):
+    def __init__(self, *steps, **kwargs):
         self.name = kwargs.get("name", None)
         
-        tasks = list(tasks)
+        steps = list(steps)
         
-        if callable(tasks[0]):
-            self.tasks = tasks
+#         steps = fix_pipe_arg(*steps)
+        
+#         print(steps)
+        if callable(steps[0]):
+            self.steps = steps
             self.start_value = None
         else:
-            self.start_value = tasks[0]
-            self.tasks = tasks[1:]
+            self.start_value = steps[0]
+            self.steps = steps[1:]
             
-    def append(self, *tasks):
-        self.tasks += tasks
+    def append(self, *steps):
+        self.steps += steps
         
     def insert(self, index, task):
-        self.tasks = self.tasks.insert(index, task)
+        self.steps = self.steps.insert(index, task)
         
     def replace(self, index, task):
-        self.tasks[index] = task
+        self.steps[index] = task
         
     def open(self, data=None):
         
@@ -103,21 +107,22 @@ class Pipe:
     
         if data != None:
             
-            if len(get_args(self.tasks[0]).args) == 1 or ( self.tasks[0].__module__ == "pipe" and self.tasks[0].__name__ == "open"):
-                prev_result = self.tasks[0](data)
-            elif len(get_args(self.tasks[0]).args) > 1:
-                prev_result = self.tasks[0](*data)
+            if len(get_args(self.steps[0]).args) == 1 or ( self.steps[0].__module__ == "pipe" and self.steps[0].__name__ == "open"):
+                prev_result = self.steps[0](data)
+            elif len(get_args(self.steps[0]).args) > 1:
+                prev_result = self.steps[0](*data)
                 
         else:
-            prev_result = self.tasks[0]()
+            prev_result = self.steps[0]()
             
-        for task in self.tasks[1:]:
+        for task in self.steps[1:]:
             
             if len(get_args(task).args) == 1 or ( task.__module__ == "pipe" and task.__name__ == "open"):
                 prev_result = task(prev_result)
             elif len(get_args(task).args) > 1:
                 prev_result = task(*prev_result)
-
+    
+        
         # the use is multithreading so add the result to the pool of data
         if(self.name != None):
             global pool
@@ -128,7 +133,7 @@ class Pipe:
         
 # returns a deep copy of the pipe that is passed to it         
 def copy(pipe):
-    return Pipe(*pipe.tasks)        
+    return Pipe(*pipe.steps)        
 
 # Limiter, it only allows x number of things from the previous stage to the next one
 
@@ -146,21 +151,46 @@ def limit(limit):
 
 # Repeater, repeatedly calls a function with the same arguments x times
 def repeat(function, times):
+#     fix_pipe_arg(function)
+    
     def repeater(args):
         results = []
         for i in range(times):
             results.append(function(args))
         return results
     
+def fix_pipe_arg(*args):
+    """Use this function so that if a pipe is passed to it it will automatically use its open function wprk in progress"""
     
-# Validator, runs validate function which must return true or false depending on whether or not the data is valid, if it is valid then it will return the input data, if it is not valid it will execute another function to get the corrected result
+    print(args)
+    new_args = []
+    for arg in args:
+        
+        if(type(arg) is Pipe):
+            new_args.append(arg.open)
+        else:
+            new_args.append(arg)
+    return new_args
 
-def validate(validity_checker, on_fail = None):
+
+# Validator, runs check_validity function which must return true or false depending on whether or not the data is valid, if it is valid then it will return the input data, if it is not valid it will execute another function to get the corrected result
+
+def validate(check_validity, on_success = None, on_fail = None):
+
+#     fix_pipe_arg(check_validity, on_success, on_fail)
+
     def validator(data):
-        if(validity_checker(data)):
-            return data
-        elif on_fail != None:
-            return on_fail(data)
+        
+        if(check_validity(data)):
+
+            if(on_success != None):
+                return on_success(data)
+            else:
+                return data
+        else:
+            if(on_fail != None):
+                return on_fail(data)
+            return None
     return validator
 
 # Parallel runs all the pipes listed at the same time, concurrently
@@ -181,6 +211,16 @@ def parallel(*pipes, **kwargs):
         threads.append(thread)
     return threads
 
+def run_parallel(*pipes):
+    """A wrapper to make the parallel function play nice with pipes it currently does not support passing args to pipes open
+        function
+    """
+    
+    def parallel_runner():
+        
+        return parallel(*pipes)
+    return parallel_runner
+
 # Join pipes waits for all the pipes to stop flowing and then closes them off.
 # pool is a dictionary so we can pull out the results of the joining regardless of order :)
 pool = {}
@@ -199,7 +239,7 @@ def join(threads):
         
     # free memory
     del threads[:]
-        
+       
     temp_pool = pool.copy()
     pool.clear()
     return temp_pool
@@ -211,11 +251,11 @@ def join(threads):
 
 # this is due to the fact that the streamer assumes that there is a finite number of items in the data it is iterating over and then accumulates the result and returns it. It does not expect a infinite data source such as a generator.
 
-def stream(*tasks):
+def stream(*steps):
     def streamer(data):
         
         # transparently create a pipe
-        pipe = Pipe(*tasks)
+        pipe = Pipe(*steps)
         
         # iterate through and put items into the pipe one by one
         results = []
@@ -292,11 +332,39 @@ def simple_balance(pipe, chunk_num):
     return balance_load.open
 
 # not to be confused with parallel
-# this function will split a list into individual items and run the tasks as a pipe on each item concurrently
+# this function will split a list into individual items and run the steps as a pipe on each item concurrently
 # it will then automatically aggregate the results into a list that is ordered the same as the items in the input
 
 # this is a even simpler to use function than the simple_balance function
 
 # great for scenarios where you want to just run many copies of one pipe and have everything managed
-def run_concurrently(*tasks):
-    return simple_balance( Pipe( *tasks ), 1)
+def run_concurrently(*steps):
+    return simple_balance( Pipe( *steps ), 1)
+
+from os import path
+
+def checkpoint(fname, fformat = "csv", mode="a+"):
+    """
+        This super special function fires off a worker thread to write a dataframe to a specified CSV file in a non blocking
+        way. In the future it will support alternative file formats and other data types besides pandas dataframes.
+    """
+    def __checkpoint(data):
+        
+        if(path.isfile(fname)):
+            with open(fname, mode) as my_file:
+                data.to_csv(my_file, header=False)
+        else:
+            data.to_csv(fname)
+    
+    # assume data is a dataframe for now, add if clauses for other if statements later
+    def checkpointer(data):
+        
+        # later this will checkpoint all the tasks passeed to this too
+        
+        # create fire and forget thread
+        Thread(target=__checkpoint, kwargs = {'data':data}).start()
+        
+        # return data so we can keep going
+        return data
+    
+    return checkpointer

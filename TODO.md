@@ -9,3 +9,6 @@
 - Add a local notebook setup for development.
 
 - Improve the documentation using this guide and others http://docs.python-guide.org/en/latest/writing/documentation/
+- Add other todos from other notes
+
+- Make the pipes serializable with the default pickle module instead of requiring dill
