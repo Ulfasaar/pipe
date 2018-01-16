@@ -12,3 +12,4 @@
 - Add other todos from other notes
 
 - Make the pipes serializable with the default pickle module instead of requiring dill
+- Write up full list of limitations and motivation update features

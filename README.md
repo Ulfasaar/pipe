@@ -17,6 +17,7 @@ whilst still providing access to the lower level internal functions used so that
 - Minimalism
 - Performance
 - Portability
+- Ease of integration
 
 # Building from source
 

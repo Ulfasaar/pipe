@@ -206,7 +206,7 @@ def parallel(*pipes, **kwargs):
         if(args != None):
             thread = Thread(target=pipe.open, kwargs = {'data':args[i]})
         else:
-            thread = Thread(target=pipe.open)
+            thread = Thread(target=pipe.open, daemon = True)
         thread.start()
         threads.append(thread)
     return threads
@@ -260,6 +260,7 @@ def stream(*steps):
         # iterate through and put items into the pipe one by one
         results = []
         for item in data:
+            print(item)
             results.append(pipe.open(item))
         
         return results
