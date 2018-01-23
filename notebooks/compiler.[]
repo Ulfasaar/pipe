@@ -21,7 +21,7 @@ group_defs lines
             chunks.append(chunk)
             chunk = []
     return chunks
-            
+
 compile_defs chunks
     
     for i, lines in enumerate(chunks):
