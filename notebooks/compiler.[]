@@ -43,3 +43,8 @@ join_lines chunks
     for lines in chunks:
         result.append('\n'.join(lines))
     return '\n'.join(result)
+
+split_lines 
+group_defs
+compile_defs
+join_lines 
