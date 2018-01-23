@@ -1,0 +1,45 @@
+split_lines raw_text
+    
+    lines = raw_text.split('\n')
+    
+    while '' in lines: lines.remove('')
+    return lines
+
+group_defs lines
+
+    # somehow group the lines together to resemble definitions
+    # look for return statement?
+    chunks = []
+    
+    chunk = []
+    
+    print(lines)
+    for line in lines:
+        chunk.append(line)
+        
+        if ('return' in line):
+            chunks.append(chunk)
+            chunk = []
+    return chunks
+            
+compile_defs chunks
+    
+    for i, lines in enumerate(chunks):
+    
+        # change arguments so that they are comma seperated
+        tokens = lines[0].split(' ')
+
+        name = tokens[0]
+        args = ','.join(tokens[1:])
+
+        lines[0] = "def " + name + "(" + args + "):"
+        
+        chunks[i] = lines
+    return chunks
+
+join_lines chunks
+    
+    result = []
+    for lines in chunks:
+        result.append('\n'.join(lines))
+    return '\n'.join(result)
