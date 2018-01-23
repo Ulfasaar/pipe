@@ -1,10 +1,11 @@
 split_lines raw_text
     
     lines = raw_text.split('\n')
-    
+#     print("raw lines\n")
+#     print(lines)
     while '' in lines: lines.remove('')
     return lines
-
+      
 group_defs lines
 
     # somehow group the lines together to resemble definitions
@@ -13,16 +14,32 @@ group_defs lines
     
     chunk = []
     
-    print(lines)
+#     print("\ngrouping\n")
+#     print(lines)
+    
     for line in lines:
         chunk.append(line)
-        
-        if ('return' in line):
+    
+#         return marks the end of chunk for now, later it will just be end of tabbing
+# how to handle special pipe lines>
+        if ('return' in line) and '#' not in line and "'return'" not in line:
             chunks.append(chunk)
             chunk = []
-    return chunks
+            
+    # scan from the bottom up to construct pipe
+    lines.reverse()
+    
+    pipe_chunk = []
+    
+    for line in lines:
+        if('return' in line):
+            break
+        else:
+            pipe_chunk.append(line)
+        
+    return chunks, pipe_chunk
 
-compile_defs chunks
+compile_defs chunks pipe_chunk
     
     for i, lines in enumerate(chunks):
     
@@ -35,16 +52,41 @@ compile_defs chunks
         lines[0] = "def " + name + "(" + args + "):"
         
         chunks[i] = lines
+    return chunks, pipe_chunk
+	
+compile_pipe chunks pipe_chunk
+
+    result = []
+    
+    for line in pipe_chunk:
+        result.append(line + ',')
+        
+    # need to find a way to insert this at this step instead of passing it through
+    # assume if it is not given that it is the file name
+    name = "compiler"
+        
+    result.insert(0, name + ' = __pipe__.Pipe(')
+    result.append(')')
+    chunks.append(result)
     return chunks
 
 join_lines chunks
     
     result = []
+    
+    for lines in chunks:
+        lines.append('\n')
+    
     for lines in chunks:
         result.append('\n'.join(lines))
     return '\n'.join(result)
 
-split_lines 
+import_pipe result
+    return "import pipe as __pipe__\n\n" + result
+
+split_lines
 group_defs
 compile_defs
-join_lines 
+compile_pipe
+join_lines
+import_pipe
