@@ -117,6 +117,7 @@ class Pipe:
             
         for task in self.steps[1:]:
             
+            print(get_args(task.args))
             if len(get_args(task).args) == 1 or ( task.__module__ == "pipe" and task.__name__ == "open"):
                 prev_result = task(prev_result)
             elif len(get_args(task).args) > 1:
