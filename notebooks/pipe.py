@@ -202,10 +202,12 @@ def validate(check_validity, on_success = None, on_fail = None):
             return None
     return validator
 
+
 # Parallel runs all the pipes listed at the same time, concurrently
-from threading import Thread
 
 # parallel accepts a optional list of arguments to be passed to each pipe
+
+from safe import Thread
 
 def parallel(*pipes, **kwargs):
     args = kwargs.get("args", None)
@@ -215,7 +217,8 @@ def parallel(*pipes, **kwargs):
         if(args != None):
             thread = Thread(target=pipe.open, kwargs = {'data':args[i]})
         else:
-            thread = Thread(target=pipe.open, daemon = True)
+            thread = Thread(target=pipe.open)
+            
         thread.start()
         threads.append(thread)
     return threads

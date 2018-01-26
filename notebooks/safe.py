@@ -20,6 +20,38 @@ def resolve_get_args():
 def make_dirs(new_path):
     if(path.exists(new_path)== False):
        makedirs(new_path)
-       
+
+from threading import Thread
+
+def Thread(target, args = None, kwargs = None, daemon = True):
+    
+    if(version_info[0] == 2):
+        
+        if(args != None and kwargs != None):
+            thread = Thread(target = target, kwargs = kwargs, args = args)
+            thread.daemon = daemon
+            return thread
+        elif(args != None and kwargs == None):
+            thread = Thread(target = target, args = args)
+            thread.daemon = daemon
+            return thread
+        elif(args == None and kwargs != None):
+            thread = Thread(target = target, kwargs = kwargs)
+            thread.daemon = daemon
+            return thread
+        else:
+            thread = Thread(target = target)
+            thread.daemon = daemon
+            return thread
+    else:
+          if(args != None and kwargs != None):
+            return Thread(target = target, kwargs = kwargs, args = args, daemon = daemon) 
+        elif(args != None and kwargs == None):
+            return Thread(target = target, args = args)
+        
+        elif(args == None and kwargs != None):
+            return Thread(target = target, kwargs = kwargs, daemon = daemon)
+        else:
+            return Thread(target = target, daemon = daemon)
         
 # add lines for resolving urrlib, etc
