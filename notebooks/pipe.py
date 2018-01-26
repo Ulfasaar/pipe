@@ -1,4 +1,7 @@
 """
+version 0.1
+
+
 Pipes provide a nice way to lazily queue steps for later execution and allow for a nice way to chain together sequential functions. They also provide many other benefits listed below along with their usage information
 
 Pipes can accept raw values at their tops but nowhere else in the pipe as that would break the flow and be pointless 
@@ -60,10 +63,12 @@ You may want to consider a different structure if your problem is mostly asynchr
 
 """
 
-import inspect
-from sys import version_info
+from safe import resolve_get_args
 
-class Pipe:
+class Pipe(object):
+    
+#     slots to make things more efficent
+    __slots__=("steps", "name", "start_value")
     
     def __init__(self, *steps, **kwargs):
         self.name = kwargs.get("name", None)
@@ -71,8 +76,7 @@ class Pipe:
         steps = list(steps)
         
 #         steps = fix_pipe_arg(*steps)
-        
-#         print(steps)
+
         if callable(steps[0]):
             self.steps = steps
             self.start_value = None
@@ -83,47 +87,51 @@ class Pipe:
     def append(self, *steps):
         self.steps += steps
         
-    def insert(self, index, task):
-        self.steps = self.steps.insert(index, task)
+    def insert(self, index, step):
+        self.steps = self.steps.insert(index, step)
         
-    def replace(self, index, task):
-        self.steps[index] = task
-        
+    def replace(self, index, step):
+        self.steps[index] = step
+
     def open(self, data=None):
         
-        prev_result = None
-        get_args = None
-
-        if(version_info[0] == 2):
-            get_args = inspect.getargspec
-        else:
-            get_args = inspect.getfullargspec
-
-        if self.start_value != None and data != None:
-            print("WARNING! you put a raw value at the top of your pipe and you put " + str(data) + " in the opening of the pipe the value at the start of the pipe has been overwritten by the passed in value. You may want to get rid of that value at the top of the pipe to get rid of this message\n")
-        
-        if self.start_value != None and data == None:
-            data = self.start_value
-    
-        if data != None:
+        def get_result(step, data):
+            args = get_args(step).args
+            num_args = len(args)
             
-            if len(get_args(self.steps[0]).args) == 1 or ( self.steps[0].__module__ == "pipe" and self.steps[0].__name__ == "open"):
-                prev_result = self.steps[0](data)
-            elif len(get_args(self.steps[0]).args) > 1:
-                prev_result = self.steps[0](*data)
+            if num_args == 1 or (num_args == 2 and args[0] == "self"):
+                return step(data)
                 
-        else:
-            prev_result = self.steps[0]()
+            elif num_args > 1:
+                return step(*data)
             
-        for task in self.steps[1:]:
-            
-            print(get_args(task.args))
-            if len(get_args(task).args) == 1 or ( task.__module__ == "pipe" and task.__name__ == "open"):
-                prev_result = task(prev_result)
-            elif len(get_args(task).args) > 1:
-                prev_result = task(*prev_result)
-    
+            if(callable(step)):
+                return step()
+            else:
+                return step
         
+        prev_result = None
+        get_args = resolve_get_args()
+
+        if self.start_value != None:
+            if(data == None):
+                data = self.start_value
+            else:
+                print("WARNING! you put a raw value at the top of your pipe and you put " + str(data) + " in the opening of the pipe the value at the start of the pipe has been overwritten by the passed in value. You may want to get rid of that value at the top of the pipe to get rid of this message\n")
+            
+        if(len(self.steps)> 0):
+            if data != None:
+
+                prev_result = get_result(self.steps[0], data)
+
+            else:
+                prev_result = self.steps[0]()
+        else:
+            return data
+     
+        for step in self.steps[1:]:
+            prev_result = get_result(step, prev_result)
+
         # the use is multithreading so add the result to the pool of data
         if(self.name != None):
             global pool
