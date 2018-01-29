@@ -1,5 +1,5 @@
 """
-version 0.1
+version 0.1.1
 
 
 Pipes provide a nice way to lazily queue steps for later execution and allow for a nice way to chain together sequential functions. They also provide many other benefits listed below along with their usage information
@@ -272,8 +272,7 @@ def stream(*steps):
         # iterate through and put items into the pipe one by one
         results = []
         for item in data:
-            print(item)
-            results.append(pipe.open(item))
+           results.append(pipe.open(item))
         
         return results
             
