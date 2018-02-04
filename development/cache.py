@@ -2,7 +2,7 @@ import datetime as dt
 import time
 
 """
-    version 0.1 
+    version 0.2
     
     A library that makes caching data to improve performance incredibly easy
     It offers the ability to refresh data periodically, on external version change, a super effecient hybrid approach 
@@ -23,13 +23,31 @@ class Cache(object):
             self.isInit = False
         return self.data
 
-    def refresh(self):
-        self.data = self._refresh()
+    def refresh(self, *args):
+        self.data = self._refresh(*args)
 
     def empty(self):
         self.data = self._empty()
 
+class __Memoize(object):
+    __slots__("past_data", "cache")
+    def __init__(self, refresh):
+        cache = Cache(refresh)
 
+""" A special cache that will automatically refresh when a new argument value is passed, otherwise it will return a cached value"""
+def Memoize(refresh):
+
+    # finish by wrapping class construction above with this
+    def Memoized(data):
+        global past_data
+        if(data == past_data):
+            return cache.get()
+        else:
+            past_data = data
+            cache.refresh(*data)
+            return cache.get()
+    return Memoized
+    
 
 class HybridCache(Cache):
     __slots__ = ("timeout", "hasElapsed", "current_time", "prev_time", "diff_time", "current_version", "get_version")
