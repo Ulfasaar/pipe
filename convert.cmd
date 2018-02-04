@@ -1,0 +1,1 @@
+jupyter nbconvert --output-dir development --to script notebooks/*.ipynb
