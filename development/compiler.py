@@ -21,6 +21,8 @@ with open("compiler.[]", 'r') as raw:
 
 # print(sample)
 
+# add support for classes with nice syntax for abstract 
+# data types
 
 # In[226]:
 

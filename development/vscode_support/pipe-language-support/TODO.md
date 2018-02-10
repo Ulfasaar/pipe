@@ -1,4 +1,4 @@
-Get definitions and arguments highlighting example just uses : for the time being
+arguments highlighting
 
 Fix block comments / python doc strings
 
