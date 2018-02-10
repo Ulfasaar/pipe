@@ -1,5 +1,4 @@
 split_lines raw_text
-    
     lines = raw_text.split('\n')
 #     print("raw lines\n")
 #     print(lines)

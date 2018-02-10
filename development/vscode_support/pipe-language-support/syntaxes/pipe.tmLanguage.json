@@ -1,0 +1,46 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Pipe",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include":"#comments"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.pipe",
+				"match": "\\b(def|if|while|for|return)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.pipe",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.pipe",
+					"match": "\\\\."
+				}
+			]
+		},
+		"comments":{
+			"name":"comment.line.pipe",
+			"begin":"#",
+			"end":"\n",
+			"patterns": [
+				{
+					"name":"comment.line.pipe",
+					"match": "#.*\n"
+				}
+			]
+		}
+	},
+	"scopeName": "source.pipe"
+}
