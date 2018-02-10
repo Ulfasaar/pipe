@@ -31,9 +31,6 @@
 			]
 		},
 		"comments":{
-			"name":"comment.line.pipe",
-			"begin":"#",
-			"end":"\n",
 			"patterns": [
 				{
 					"name":"comment.line.pipe",
