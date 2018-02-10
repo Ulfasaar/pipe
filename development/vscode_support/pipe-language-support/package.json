@@ -2,6 +2,10 @@
     "name": "pipe-language-support",
     "displayName": "Pipe language support",
     "description": "Basic support for the pipe programming language",
+    "icon": "./logo.png",
+    "repository": {
+        "url": "https://github.com/Ulfasaar/pipe"
+    },
     "version": "0.0.1",
     "publisher": "rjweyers",
     "engines": {
