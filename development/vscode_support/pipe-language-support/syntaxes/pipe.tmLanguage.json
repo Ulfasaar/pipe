@@ -6,10 +6,16 @@
 			"include": "#keywords"
 		},
 		{
+			"include":"#comments"
+		},
+		{
+			"include":"#functions"
+		},
+		{
 			"include": "#strings"
 		},
 		{
-			"include":"#comments"
+			"include": "#strings_single"
 		}
 	],
 	"repository": {
@@ -30,11 +36,30 @@
 				}
 			]
 		},
+		"strings_single":{
+			"name":"string.quoted.single",
+			"begin": "\\'",
+			"end":"\\'",
+			"patterns": [
+				{
+				"name": "constant.character.escape.pipe",
+				"match": "\\\\."
+				}
+			]
+		},
 		"comments":{
 			"patterns": [
 				{
 					"name":"comment.line.pipe",
 					"match": "#.*\n"
+				}
+			]
+		},
+		"functions":{
+			"patterns":[
+				{
+					"name": "entity.name.function.pipe",
+					"match":"^\\S*\\b"
 				}
 			]
 		}
