@@ -24,6 +24,8 @@ with open("compiler.[]", 'r') as raw:
 # add support for classes with nice syntax for abstract 
 # data types
 
+# could rewrite the compiler in nim so that it is a smaller executable more effecient etc
+
 # In[226]:
 
 
