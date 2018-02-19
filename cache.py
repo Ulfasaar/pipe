@@ -30,7 +30,6 @@ class Cache(object):
         self.data = self._empty()
 
 
-
 class HybridCache(Cache):
     __slots__ = ("timeout", "hasElapsed", "current_time", "prev_time", "diff_time", "current_version", "get_version")
 
@@ -75,8 +74,6 @@ class HybridCache(Cache):
             self.refresh()
             self.isInit = False
         return self.data
-
-
 
 class TimeoutCache(Cache):
     __slots__ = ("timeout", "hasElapsed", "current_time", "prev_time", "diff_time")
@@ -142,5 +139,3 @@ class VersionedCache(Cache):
                 self.data = self._refresh()
                 self.current_version = external_version
         return self.data
-
-
