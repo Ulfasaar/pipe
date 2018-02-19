@@ -1,1 +1,0 @@
-csc -t %1.scm -optimize-level 3 -output-file run_time.c

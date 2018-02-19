@@ -13,3 +13,4 @@
 
 - Make the pipes serializable with the default pickle module instead of requiring dill
 - Write up full list of limitations and motivation update features
+- Make normal unit tests for code, later move to my own testing system and just write unit tests for the testing system
