@@ -1,0 +1,24 @@
+  // "configuration": "./language-configuration.json",
+
+  ,
+		"functions":{
+			"patterns": [
+				{
+					"name":"entity.name.function",
+					"match": "[^ \t\n]*"
+				}
+			]
+		}
+		"parameters":{
+			"patterns": [
+				{
+					"name":"meta.parameter.type.variable",
+					"match": "\|.*"
+				}
+			]
+		}
+
+
+It has global enabled on regex by default
+
+If regexs overlap it makes it white because it evaluates to false
