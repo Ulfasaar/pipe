@@ -1,0 +1,22 @@
+  def refresh(self, *args):
+        self.data = self._refresh(*args)
+
+class __Memoize(object):
+    __slots__("past_data", "cache")
+    def __init__(self, refresh):
+        cache = Cache(refresh)
+
+""" A special cache that will automatically refresh when a new argument value is passed, otherwise it will return a cached value"""
+def Memoize(refresh):
+
+    # finish by wrapping class construction above with this
+    def Memoized(data):
+        global past_data
+        if(data == past_data):
+            return cache.get()
+        else:
+            past_data = data
+            cache.refresh(*data)
+            return cache.get()
+    return Memoized
+    
