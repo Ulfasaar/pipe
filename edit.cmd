@@ -1,1 +1,1 @@
-jupyter notebook --port 8899
+jupyter notebook --port 8888 --no-browser
