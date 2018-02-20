@@ -1,12 +1,12 @@
-import compute_pipe
+# import compute_pipe
 
-def worker():
-    """worker function"""
-    print 'Worker'
-    return
+# def worker():
+#     """worker function"""
+#     print 'Worker'
+#     return
 
-if __name__ == '__main__':
-    print(compute_pipe)
+# if __name__ == '__main__':
+#     print(compute_pipe)
     # test = cp.pipe.Pipe(worker)
     # processes = cp.pipe.parallel(test, test)
     # pp.join(processes)
