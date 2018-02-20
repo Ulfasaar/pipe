@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
  
 setup(name='compute_pipe',
       version='0.1',
@@ -7,6 +7,7 @@ setup(name='compute_pipe',
       author='Ryan Weyers',
       author_email='weyers.ryan@gmail.com',
       description='A beautiful, simple, fast framework for creating computation pipelines.',
-      packages=find_packages(exclude=['tests']),
       long_description=open('README.md').read(),
+      package_dir={'': 'src'},
+      packages=[''],
       zip_safe=True)

@@ -1,1 +1,3 @@
 Follow this https://packaging.python.org/tutorials/distributing-packages/
+
+Next setup automated testing for package installation
