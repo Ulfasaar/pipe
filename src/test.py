@@ -5,5 +5,9 @@ def hello(name):
 
 test = pp.Pipe(hello)
 
-pp.parallel(test)
+from multiprocessing import freeze_support
+
+if name == "__main__":
+    freeze_support()
+    pp.parallel(test, test)
 # pp.simple_balance(test, 1)(["Steve", "Bob"])
