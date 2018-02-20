@@ -2,8 +2,6 @@ import datetime as dt
 import time
 
 """
-    version 0.1 
-    
     A library that makes caching data to improve performance incredibly easy
     It offers the ability to refresh data periodically, on external version change, a super effecient hybrid approach 
     and a way to refresh caches manually

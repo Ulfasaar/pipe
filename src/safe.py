@@ -1,6 +1,4 @@
 """
-    version 0.1
-    
     A useful library for making some of pythons design decisions more sensible by default
     eg: simply not making folders if they already exist
 """
