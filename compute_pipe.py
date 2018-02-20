@@ -58,7 +58,7 @@ You may want to consider a different structure if your problem is mostly asynchr
 
 """
 
-from safe import resolve_get_args
+from version_safe import resolve_get_args
 
 class Pipe(object):
     
@@ -202,7 +202,7 @@ def validate(check_validity, on_success = None, on_fail = None):
 
 # parallel accepts a optional list of arguments to be passed to each pipe
 
-from safe import Thread
+from version_safe import Thread
 
 def parallel(*pipes, **kwargs):
     args = kwargs.get("args", None)
