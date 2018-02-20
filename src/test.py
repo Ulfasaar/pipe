@@ -1,3 +1,9 @@
-import pipe
+import pipe as pp
 
-hi = pipe.Pipe()
+def hello(name):
+    return "hello " + name
+
+test = pp.Pipe(hello)
+
+pp.parallel(test)
+# pp.simple_balance(test, 1)(["Steve", "Bob"])

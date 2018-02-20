@@ -211,19 +211,56 @@ from safe import Thread
 
 def parallel(*pipes, **kwargs):
     args = kwargs.get("args", None)
-    threads = []
+    multi_process = kwargs.get("multi_process", True)
+
+    Worker = None
+
+    # decide between multiprocessing and multithreading
+    if(multi_process):
+        Worker = Process
+    else:
+        Worker = Thread
+
+    workers = []
     for i, pipe in enumerate(pipes):
         
         if(args != None):
-            thread = Thread(target=pipe.open, kwargs = {'data':args[i]})
+            worker = Worker(target=pipe.open, kwargs = {'data':args[i]})
         else:
-            thread = Thread(target=pipe.open)
+            worker = Worker(target=pipe.open)
             
-        thread.start()
-        threads.append(thread)
-    return threads
+        worker.start()
+        workers.append(worker)
+    return workers
 
-def run_parallel(*pipes):
+# refactor this to join with parralel so that we only have one function with a argument is_threads = false
+# def multi_process(*pipes, **kwargs):
+#     args = kwargs.get("args", None)
+#     processes = []
+#     for i, pipe in enumerate(pipes):
+        
+#         if(args != None):
+#             process = Process(target=pipe.open, kwargs = {'data':args[i]})
+#         else:
+#             process = Process(target=pipe.open)
+            
+#         process.start()
+#         processes.append(process)
+#     return processes
+
+
+
+# def run_multi_process(*pipes):
+#     """A wrapper to make the multi process function play nice with pipes it currently does not support passing args to pipes open
+#         function
+#     """
+    
+#     def multi_process_runner():
+        
+#         return multi_process(*pipes)
+#     return multi_process_runner
+
+def run_parallel(*pipes, **kwargs):
     """A wrapper to make the parallel function play nice with pipes it currently does not support passing args to pipes open
         function
     """
@@ -233,24 +270,31 @@ def run_parallel(*pipes):
         return parallel(*pipes)
     return parallel_runner
 
+
 # Join pipes waits for all the pipes to stop flowing and then closes them off.
 # pool is a dictionary so we can pull out the results of the joining regardless of order :)
-pool = {}
+# pool = {}
+
+# refactor parallel and process to use the same synchronising dict?
+from multiprocessing import Process, Manager
+
+syncron = Manager()
+pool = syncron.__dict__()
 
 # this could be improved to accept pipes, store the threads as a dictionary where the memory address is the key and 
 # the value is the thread, means we can do like join(pipe1, pipe2) etc
 
 # for now it just assumes that it will receive the raw threads from the previous step
 
-def join(threads):
+def join(workers):
     global pool
     
     # join all the threads so we wait for all the threads to finish
-    for thread in threads:
-        thread.join()
+    for worker in workers:
+        worker.join()
         
     # free memory
-    del threads[:]
+    del workers[:]
        
     temp_pool = pool.copy()
     pool.clear()
