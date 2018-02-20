@@ -44,7 +44,7 @@ def Thread(target, args = None, kwargs = None, daemon = True):
             thread.daemon = daemon
             return thread
     else:
-          if(args != None and kwargs != None):
+        if(args != None and kwargs != None):
             return Thread(target = target, kwargs = kwargs, args = args, daemon = daemon) 
         elif(args != None and kwargs == None):
             return Thread(target = target, args = args)
