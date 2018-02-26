@@ -69,7 +69,6 @@ class Pipe(object):
         self.name = kwargs.get("name", None)
         
         steps = list(steps)
-        
 #         steps = fix_pipe_arg(*steps)
 
         if callable(steps[0]):
@@ -83,7 +82,7 @@ class Pipe(object):
         self.steps += steps
         
     def insert(self, index, step):
-        self.steps = self.steps.insert(index, step)
+        self.steps.insert(index, step)
         
     def replace(self, index, step):
         self.steps[index] = step
