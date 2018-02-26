@@ -1,12 +1,7 @@
 """
-version 0.1.1
-
-
 Pipes provide a nice way to lazily queue steps for later execution and allow for a nice way to chain together sequential functions. They also provide many other benefits listed below along with their usage information
 
 Pipes can accept raw values at their tops but nowhere else in the pipe as that would break the flow and be pointless 
-
-
 
 EG: Pipe(
         "hi",
@@ -25,7 +20,7 @@ Pipe(
 
 Pipes also accept arguments in their open function removing the need for a complex step in the pipe that pulls the data in if that is not desired.
 
-eg:
+EG:
 
 test = Pipe(
 
@@ -63,7 +58,7 @@ You may want to consider a different structure if your problem is mostly asynchr
 
 """
 
-from safe import resolve_get_args
+from version_safe import resolve_get_args
 
 class Pipe(object):
     
@@ -207,7 +202,7 @@ def validate(check_validity, on_success = None, on_fail = None):
 
 # parallel accepts a optional list of arguments to be passed to each pipe
 
-from safe import Thread
+from version_safe import Thread
 
 def parallel(*pipes, **kwargs):
     args = kwargs.get("args", None)
