@@ -75,6 +75,35 @@ class TestPipe(unittest.TestCase):
         actual = test.open()
         self.assertListEqual(actual, [1, 2])
 
+    def test_append(self):
+        def funct():
+            return 1
+        
+        def funct2():
+            return 2
+        
+        def funct3():
+            return 3
+
+        test = Pipe(funct, funct2)
+        test.append(funct3)
+
+        self.assertEquals(test.steps[-1], funct3)
+
+    def test_append_collection(self):
+        def funct():
+            return 1
+        
+        def funct2():
+            return 2
+        
+        def funct3():
+            return 3
+
+        test = Pipe(funct)
+        test.append(funct2, funct3)
+
+        self.assertListEqual(test.steps, [funct, funct2, funct3])
 
 if __name__ == '__main__':
     unittest.main()
