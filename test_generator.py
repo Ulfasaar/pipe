@@ -27,7 +27,7 @@ changed_function = u"""def add_2(num):
 print(changed_function + "\n")
 
 # showcasing how it will change at runtime
-eval(changed_function)
+exec(changed_function)
 
 #sigh python at compile time is fine but runtime is having a fit
 
@@ -47,15 +47,15 @@ for i, funct in enumerate(gen):
 
 # this has to somehow sit outside the thing that actually executes the steps otherwise we risk overwriting it on resume
 # which means we lose the progress thus far
-step_gen = (x for x in self.steps)
+# step_gen = (x for x in self.steps)
 
 # outer if is to prevent items being wasted in the generator
 
 # open will have to be executed inside a thread such as parallel
-if(pause == False):
-    for step in step_gen:
-        # run return result etc
-        # if paused after a step break
-        if(pause):
-            break
+# if(pause == False):
+#     for step in step_gen:
+#         # run return result etc
+#         # if paused after a step break
+#         if(pause):
+#             break
 
