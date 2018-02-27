@@ -8,5 +8,5 @@ setup(name='compute_pipe',
       author_email='weyers.ryan@gmail.com',
       description='A beautiful, simple, fast framework for creating computation pipelines.',
       long_description=open('README.md').read(),
-      packages=find_packages(include=['.'], exclude=['tests']),
+      packages=find_packages(include=['.'], exclude=['tests', '*test*.py', 'test.py']),
       zip_safe=True)
