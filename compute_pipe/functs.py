@@ -1,4 +1,5 @@
-        
+from pipe import Pipe
+
 # returns a deep copy of the pipe that is passed to it         
 def copy(pipe):
     return Pipe(*pipe.steps)        

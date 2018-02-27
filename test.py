@@ -1,1 +1,0 @@
-from compute_pipe import pipe
