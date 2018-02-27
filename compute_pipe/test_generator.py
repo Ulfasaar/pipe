@@ -41,6 +41,15 @@ funct_list[-1] = add_2
 for i, funct in enumerate(gen):
     print(funct(1))
 
+
+
+# a better solution
+## define a step class, this class will hold whether or not it has been run already to track progress
+# biggest headache would be finding a way to easily keep the has_run prop up to date
+# however has less overhead than generators and would mean that we would have proper progress tracking
+
+
+
 # OMG it works!!!! We can update a system whilst its live B)
 
 # stub execution with pausing capacity
