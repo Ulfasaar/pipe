@@ -1,3 +1,3 @@
-from functs import *
-from parralisation import *
 from pipe import *
+from parralisation import *
+from functs import *

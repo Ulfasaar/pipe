@@ -1,61 +1,41 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# __coconut_hash__ = 0xc1b2eb5b
-
-# Compiled with Coconut version 1.2.2 [Colonel]
-
-# Coconut Header: --------------------------------------------------------
-
-from __future__ import print_function, absolute_import, unicode_literals, division
-
-import sys as _coconut_sys, os.path as _coconut_os_path
-_coconut_file_path = _coconut_os_path.dirname(_coconut_os_path.abspath(__file__))
-_coconut_sys.path.insert(0, _coconut_file_path)
-from __coconut__ import _coconut, _coconut_MatchError, _coconut_tail_call, _coconut_tco, _coconut_igetitem, _coconut_compose, _coconut_pipe, _coconut_starpipe, _coconut_backpipe, _coconut_backstarpipe, _coconut_bool_and, _coconut_bool_or, _coconut_minus, _coconut_tee, _coconut_map, _coconut_partial
-from __coconut__ import *
-_coconut_sys.path.remove(_coconut_file_path)
-
-# Compiled Coconut: ------------------------------------------------------
-
 from compute_pipe.pipe import Pipe
 
 # returns a deep copy of the pipe that is passed to it         
-@_coconut_tco
 def copy(pipe):
-    raise _coconut_tail_call(Pipe, *pipe.steps)
+    return Pipe(*pipe.steps)        
 
 # Limiter, it only allows x number of things from the previous stage to the next one
 
 def limit(limit):
     def limiter(data):
-
+        
         if limit > 1:
             return data[:limit]
         elif limit == 1:
             return data[0]
         elif limit == 0:
             return None
-
+                
     return limiter
 
 # Repeater, repeatedly calls a function with the same arguments x times
 def repeat(function, times):
 #     fix_pipe_arg(function)
-
+    
     def repeater(args):
         results = []
         for i in range(times):
             results.append(function(args))
         return results
-
+    
 def fix_pipe_arg(*args):
     """Use this function so that if a pipe is passed to it it will automatically use its open function wprk in progress"""
-
+    
     print(args)
     new_args = []
     for arg in args:
-
-        if (type(arg) is Pipe):
+        
+        if(type(arg) is Pipe):
             new_args.append(arg.open)
         else:
             new_args.append(arg)
@@ -64,22 +44,21 @@ def fix_pipe_arg(*args):
 
 # Validator, runs check_validity function which must return true or false depending on whether or not the data is valid, if it is valid then it will return the input data, if it is not valid it will execute another function to get the corrected result
 
-def validate(check_validity, on_success=None, on_fail=None):
+def validate(check_validity, on_success = None, on_fail = None):
 
 #     fix_pipe_arg(check_validity, on_success, on_fail)
 
-    @_coconut_tco
     def validator(data):
+        
+        if(check_validity(data)):
 
-        if (check_validity(data)):
-
-            if (on_success != None):
-                raise _coconut_tail_call(on_success, data)
+            if(on_success != None):
+                return on_success(data)
             else:
                 return data
         else:
-            if (on_fail != None):
-                raise _coconut_tail_call(on_fail, data)
+            if(on_fail != None):
+                return on_fail(data)
             return None
     return validator
 
@@ -92,17 +71,17 @@ def validate(check_validity, on_success=None, on_fail=None):
 
 def stream(*steps):
     def streamer(data):
-
-# transparently create a pipe
+        
+        # transparently create a pipe
         pipe = Pipe(*steps)
-
-# iterate through and put items into the pipe one by one
+        
+        # iterate through and put items into the pipe one by one
         results = []
         for item in data:
-            results.append(pipe.open(item))
-
+           results.append(pipe.open(item))
+        
         return results
-
+            
     return streamer
 
 # converts a dictionary with a numeric index into a list of results sorted by the key
@@ -110,33 +89,34 @@ def dict_to_list(mydict):
     results = []
     for key in sorted(mydict.keys()):
         results.append(mydict[key])
-
+    
     return results
 
 from os import path
 
-def checkpoint(fname, fformat="csv", mode="a+"):
+def checkpoint(fname, fformat = "csv", mode="a+"):
     """
         This super special function fires off a worker thread to write a dataframe to a specified CSV file in a non blocking
         way. In the future it will support alternative file formats and other data types besides pandas dataframes.
     """
     def __checkpoint(data):
-
-        if (path.isfile(fname)):
-            with open(fname, mode) as my_file :
+        
+        if(path.isfile(fname)):
+            with open(fname, mode) as my_file:
                 data.to_csv(my_file, header=False)
         else:
             data.to_csv(fname)
-
-# assume data is a dataframe for now, add if clauses for other if statements later
+    
+    # assume data is a dataframe for now, add if clauses for other if statements later
     def checkpointer(data):
-
-# later this will checkpoint all the tasks passeed to this too
-
-# create fire and forget thread
-        Thread(target=__checkpoint, kwargs={'data': data}).start()
-
-# return data so we can keep going
+        
+        # later this will checkpoint all the tasks passeed to this too
+        
+        # create fire and forget thread
+        Thread(target=__checkpoint, kwargs = {'data':data}).start()
+        
+        # return data so we can keep going
         return data
-
+    
     return checkpointer
+
