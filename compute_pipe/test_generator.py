@@ -48,6 +48,8 @@ for i, funct in enumerate(gen):
 # biggest headache would be finding a way to easily keep the has_run prop up to date
 # however has less overhead than generators and would mean that we would have proper progress tracking
 
+## actually the for in loop won't run if the generator is empty so I guess it works?????
+
 
 
 # OMG it works!!!! We can update a system whilst its live B)
