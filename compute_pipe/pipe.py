@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# __coconut_hash__ = 0x5038d9f
+# __coconut_hash__ = 0x1b9c7ba2
 
 # Compiled with Coconut version 1.2.2 [Colonel]
 
@@ -145,12 +145,8 @@ class Pipe(object):
         else:
             return data
 
-        def run(step):
-            prev_result = step(prev_result)
-
-        map(run, self.steps[1:])
-#for step in self.steps[1:]:
-#prev_result = get_result(step, prev_result)
+        for step in self.steps[1:]:
+            prev_result = get_result(step, prev_result)
 
 # the use is multithreading so add the result to the pool of data
         if (self.name != None):
