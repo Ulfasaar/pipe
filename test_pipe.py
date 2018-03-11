@@ -70,6 +70,12 @@ def test_copy():
 
     assert a_pipe is not second_pipe
 
+def test_repeat():
+    def hello():
+        return 'hi'
+    
+    assert repeat(hello, 5)() == ['hello'] * 5
+
 def test_limit():
     test = Pipe([1, 2, 3 ,4], limit(2))
     actual = test.open()

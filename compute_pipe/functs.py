@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# __coconut_hash__ = 0xc1b2eb5b
+# __coconut_hash__ = 0x96707b9d
 
 # Compiled with Coconut version 1.2.2 [Colonel]
 
@@ -43,10 +43,12 @@ def repeat(function, times):
 #     fix_pipe_arg(function)
 
     def repeater(args):
-        results = []
-        for i in range(times):
-            results.append(function(args))
-        return results
+        return [function(args) for i in range(times)]
+#results = []
+#for i in range(times):
+#results.append(function(args))
+#return results
+    return repeater
 
 def fix_pipe_arg(*args):
     """Use this function so that if a pipe is passed to it it will automatically use its open function wprk in progress"""
